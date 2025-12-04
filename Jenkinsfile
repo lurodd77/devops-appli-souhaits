@@ -3,41 +3,38 @@ pipeline {
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Environnement')
+        booleanParam(name: 'LANCER_TESTS', defaultValue: true, description: 'Lancer les tests ?')
     }
 
     stages {
         stage('Installation') {
             steps {
-                echo "📦 Installation..."
-                // On installe les dépendances (nécessaire pour Jest)
+                echo "📦 Installation des dépendances..."
                 bat 'cd devops-wish && npm install'
             }
         }
 
-        stage('Tests Applicatifs (User & Voeux)') {
+        stage('Tests Applicatifs') {
             steps {
-                echo "🧪 Lancement des tests User1 et Tatouage..."
-                // Cela va lancer features.test.js qu'on vient de créer
+                echo "🧪 Exécution des tests User1 et Tatouage..."
                 bat 'cd devops-wish && npm run test'
             }
         }
 
-stage('Vérification de la Date') {
+        stage('Vérification de la Date') {
             steps {
                 script {
-                    // Récupération de la date actuelle
+                    // On récupère la date actuelle
                     def dateDuJour = new Date()
-                    // On récupère le jour du mois (ex: 4, 15, 20...)
+                    // On extrait le numéro du jour (ex: 4)
                     def jour = dateDuJour.format("d").toInteger()
                     
                     echo "📅 Nous sommes le : ${dateDuJour.format('dd/MM/yyyy')}"
 
-                    // Logique conditionnelle demandée
+                    // Logique : Avant le 15 vs Après le 15
                     if (jour < 15) {
-                        [cite_start]// Si on est avant le 15 (ex: le 4) [cite: 23]
                         echo "🔵 MESSAGE DU JOUR : Penser à renseigner vos voeux"
                     } else {
-                        [cite_start]// Si on est après le 15 [cite: 26]
                         echo "🟠 MESSAGE DU JOUR : Penser à valider vos voeux"
                     }
                 }
