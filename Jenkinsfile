@@ -22,22 +22,22 @@ pipeline {
             }
         }
 
-        stage('Vérification de la Date') {
+stage('Vérification de la Date') {
             steps {
                 script {
-                    // --- SCÉNARIO 3 : Logique de date en Groovy ---
-                    
-                    // On récupère le jour actuel (format "d" donne le numéro du jour)
+                    // Récupération de la date actuelle
                     def dateDuJour = new Date()
+                    // On récupère le jour du mois (ex: 4, 15, 20...)
                     def jour = dateDuJour.format("d").toInteger()
                     
                     echo "📅 Nous sommes le : ${dateDuJour.format('dd/MM/yyyy')}"
 
+                    // Logique conditionnelle demandée
                     if (jour < 15) {
-                        [cite_start]// Source PDF : Avant le 15, on est en phase de réalisation [cite: 71, 72]
+                        [cite_start]// Si on est avant le 15 (ex: le 4) [cite: 23]
                         echo "🔵 MESSAGE DU JOUR : Penser à renseigner vos voeux"
                     } else {
-                        [cite_start]// Source PDF : Après le 15, il faut finaliser [cite: 74, 76]
+                        [cite_start]// Si on est après le 15 [cite: 26]
                         echo "🟠 MESSAGE DU JOUR : Penser à valider vos voeux"
                     }
                 }
