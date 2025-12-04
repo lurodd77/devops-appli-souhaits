@@ -1,6 +1,6 @@
 "use client";
  
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styles from "./wish.module.css";
  
 export default function WishPage() {
@@ -10,7 +10,44 @@ export default function WishPage() {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [wishName, setWishName] = useState("");
   const [wishDate, setWishDate] = useState("");
-  const [wishes, setWishes] = useState([]);
+  const initialWishes = [
+    {
+      id: 1,
+      name: 'Me faire Tatouer',
+      // date au format YYYY-MM-DD (aujourd'hui) pour être visible dans le mois courant
+      date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
+        today.getDate()
+      ).padStart(2, '0')}`,
+      done: true,
+    },
+  ];
+
+  // keep initial state deterministic (same on server and client)
+  const [wishes, setWishes] = useState(initialWishes);
+
+  // utilisateur connecté en dur (pour démo)
+  const [connectedUser, setConnectedUser] = useState('user1');
+
+  // charger les données depuis localStorage uniquement côté client
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('wishes');
+      if (raw) setWishes(JSON.parse(raw));
+      const cu = localStorage.getItem('connectedUser');
+      if (cu) setConnectedUser(cu);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // sauvegarder les changements côté client
+  useEffect(() => {
+    try { localStorage.setItem('wishes', JSON.stringify(wishes)); } catch (e) {}
+  }, [wishes]);
+
+  useEffect(() => {
+    try { localStorage.setItem('connectedUser', connectedUser); } catch (e) {}
+  }, [connectedUser]);
  
   const daysInMonth = useMemo(
     () => new Date(currentYear, currentMonth + 1, 0).getDate(),
@@ -77,11 +114,20 @@ export default function WishPage() {
       id: Date.now(),
       name: wishName.trim(),
       date: wishDate || null,
+      done: false,
     };
  
     setWishes((prev) => [...prev, newWish]);
     setWishName("");
     setWishDate("");
+  };
+
+  const toggleDone = (id) => {
+    setWishes((prev) => prev.map((w) => (w.id === id ? { ...w, done: !w.done } : w)));
+  };
+
+  const deleteWish = (id) => {
+    setWishes((prev) => prev.filter((w) => w.id !== id));
   };
  
   const wishesThisMonth = wishes.filter((w) => {
@@ -102,24 +148,32 @@ export default function WishPage() {
  
   for (let day = 1; day <= daysInMonth; day++) {
     const isTodayFlag = isToday(day);
-    const hasWishes = hasWishesOnDay(day);
- 
+    const dayWishes = wishes.filter((w) => isSameDay(w.date, currentYear, currentMonth, day));
+    const hasWishes = dayWishes.length > 0;
+    const anyDone = dayWishes.some((w) => w.done);
+
     calendarCells.push(
-<div
+      <div
         key={day}
         className={`${styles.dayCell} ${isTodayFlag ? styles.dayToday : ""} ${
           hasWishes ? styles.dayWithWish : ""
         }`}
->
-<span>{day}</span>
-        {hasWishes && <span className={styles.dot} />}
-</div>
+      >
+        <span>{day}</span>
+        {hasWishes && (anyDone ? <span className={styles.dotDone} /> : <span className={styles.dot} />)}
+      </div>
     );
   }
  
   return (
-<div className={styles.page}>
-<h1 className={styles.title}>Mes vœux du mois</h1>
+    <div className={styles.page}>
+      <div className={styles.topBar}>
+        <div className={styles.userBadge}>
+          Connecté en tant que <strong>{connectedUser}</strong>
+        </div>
+      </div>
+
+      <h1 className={styles.title}>Mes vœux du mois</h1>
  
       <div className={styles.layout}>
         {/* CALENDRIER */}
@@ -197,12 +251,20 @@ export default function WishPage() {
 <h3 className={styles.subTitle}>Avec date dans ce mois</h3>
 <ul className={styles.list}>
                   {wishesThisMonth.map((w) => (
-<li key={w.id} className={styles.listItem}>
-<span>{w.name}</span>
-<span className={styles.dateBadge}>
-                        {new Date(w.date + "T00:00:00").toLocaleDateString("fr-FR")}
-</span>
-</li>
+                    <li key={w.id} className={`${styles.listItem} ${w.done ? styles.listItemDone : ''}`}>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <button className={styles.iconButton} onClick={() => toggleDone(w.id)} aria-label="Marquer comme fait">
+                          {w.done ? '✓' : '○'}
+                        </button>
+                        <span>{w.name}</span>
+                      </div>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <span className={styles.dateBadge}>
+                          {new Date(w.date + "T00:00:00").toLocaleDateString("fr-FR")}
+                        </span>
+                        <button className={styles.trashButton} onClick={() => deleteWish(w.id)} aria-label="Supprimer">🗑</button>
+                      </div>
+                    </li>
                   ))}
 </ul>
 </>
@@ -213,10 +275,18 @@ export default function WishPage() {
 <h3 className={styles.subTitle}>Sans date précise</h3>
 <ul className={styles.list}>
                   {wishesWithoutDate.map((w) => (
-<li key={w.id} className={styles.listItem}>
-<span>{w.name}</span>
-<span className={styles.dateBadgeMuted}>Sans date</span>
-</li>
+                    <li key={w.id} className={`${styles.listItem} ${w.done ? styles.listItemDone : ''}`}>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <button className={styles.iconButton} onClick={() => toggleDone(w.id)} aria-label="Marquer comme fait">
+                          {w.done ? '✓' : '○'}
+                        </button>
+                        <span>{w.name}</span>
+                      </div>
+                      <div style={{display:'flex', alignItems:'center', gap:8}}>
+                        <span className={styles.dateBadgeMuted}>Sans date</span>
+                        <button className={styles.trashButton} onClick={() => deleteWish(w.id)} aria-label="Supprimer">🗑</button>
+                      </div>
+                    </li>
                   ))}
 </ul>
 </>

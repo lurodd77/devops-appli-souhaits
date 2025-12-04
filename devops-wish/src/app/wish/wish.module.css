@@ -20,6 +20,24 @@
 
 }
  
+.topBar {
+  max-width: 1100px;
+  margin: 0 auto 12px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.userBadge {
+  background: white;
+  padding: 8px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  font-size: 14px;
+  color: #333;
+  font-weight: 600;
+}
+ 
 .layout {
 
   display: grid;
@@ -174,6 +192,14 @@
 
   background: #ff9800;
 
+}
+
+.dotDone {
+  align-self: flex-end;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4caf50;
 }
  
 .legend {
@@ -382,6 +408,51 @@
 
   font-size: 12px;
 
+}
+
+.listItemDone {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.iconButton {
+  border: none;
+  background: transparent;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.trashButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* small visual polish */
+.listItem:hover {
+  transform: translateY(-2px);
+  transition: transform 120ms ease;
+}
+
+.dayCell:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+  transition: all 120ms ease;
+}
+
+/* responsive: stack columns on small screens */
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .topBar { justify-content: center; margin-bottom: 16px; }
+  .title { font-size: 1.6rem; }
 }
 
  
