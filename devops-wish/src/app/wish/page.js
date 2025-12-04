@@ -138,7 +138,11 @@ export default function WishPage() {
  
   const wishesWithoutDate = wishes.filter((w) => !w.date);
  
-  const dayNames = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+  // utiliser les noms complets des jours pour une meilleure lisibilité
+  const dayNames = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+
+  // état pour afficher/cacher l'introduction longue
+  const [showIntro, setShowIntro] = useState(false);
  
   const calendarCells = [];
  
@@ -168,12 +172,57 @@ export default function WishPage() {
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
+        <div className={styles.appTitle}>
+          <span className="app-title">Vœux • MonAppli</span>
+        </div>
         <div className={styles.userBadge}>
-          Connecté en tant que <strong>{connectedUser}</strong>
+          <div className={styles.avatar}>{connectedUser.charAt(0).toUpperCase()}</div>
+          <div>Connecté en tant que <strong style={{color:'var(--primary)'}}>{connectedUser}</strong></div>
         </div>
       </div>
 
       <h1 className={styles.title}>Mes vœux du mois</h1>
+
+      <div className={styles.containerIntro}>
+        <div className={styles.introCard}>
+          <p>
+            Chaque nouvelle année, beaucoup de personnes prennent de bonnes résolutions : apprendre
+            quelque chose de nouveau, lire davantage, voyager ou encore prendre soin de leur santé.
+            Pourtant, ces engagements ne durent généralement pas plus d’un mois… moi le premier,
+            j’ai fini par arrêter d’en prendre.
+          </p>
+          {showIntro && (
+            <>
+              <p>
+                Et si la différence venait simplement d’un manque de motivation régulière ? Lorsqu’une
+                personne est stimulée au quotidien, elle est capable d’atteindre n’importe quel objectif.
+              </p>
+              <p>
+                Imaginez alors une application mobile, connectée à une montre intelligente, capable de
+                nous rappeler continuellement nos objectifs. Une application qui nous aide à progresser
+                grâce à des paliers intermédiaires, qui nous encourage et nous félicite à chaque étape
+                franchie. Peut-être que grâce à un tel outil, nos bonnes résolutions tiendraient enfin sur la durée.
+              </p>
+              <p><strong>Exemples d’objectifs / Challenges :</strong></p>
+              <ul>
+                <li>Mettre en place un système d’encouragement, de compétitions et de classement, avec plusieurs niveaux.</li>
+                <li>Réaliser un certain nombre de pas dans un délai défini, en fonction d’un objectif préalablement fixé.</li>
+                <li>Parrainer des personnes de son entourage pour les inciter à participer ou progresser dans le challenge.</li>
+              </ul>
+              <p><strong>Fixez vos objectifs pour ce mois</strong></p>
+              <p>
+                Le suivi de vos objectifs mensuels est essentiel pour progresser régulièrement. Voici
+                quelques rappels importants en fonction du moment du mois :
+              </p>
+              <p><em>Avant le 15 du mois</em> — Il vous reste encore du temps pour avancer : assurez-vous d’être en bonne voie pour atteindre vos objectifs.</p>
+              <p><em>Après le 15 du mois</em> — Nous avons dépassé la moitié du mois. Il devient urgent de finaliser vos objectifs en cours.</p>
+            </>
+          )}
+          <button className={styles.toggleIntro} onClick={() => setShowIntro((s) => !s)}>
+            {showIntro ? 'Lire moins' : 'Lire la suite'}
+          </button>
+        </div>
+      </div>
  
       <div className={styles.layout}>
         {/* CALENDRIER */}

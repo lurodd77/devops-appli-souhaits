@@ -24,19 +24,26 @@
   max-width: 1100px;
   margin: 0 auto 12px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
 .userBadge {
-  background: white;
+  background: var(--card-bg);
   padding: 8px 12px;
   border-radius: 999px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
   font-size: 14px;
-  color: #333;
+  color: var(--muted);
   font-weight: 600;
+  display:flex;align-items:center;gap:10px
 }
+
+.avatar{
+  width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,var(--primary),#0366d6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;box-shadow:0 4px 10px rgba(3,102,214,0.12)
+}
+
+.appTitle{font-size:1.1rem;font-weight:700;color:var(--primary)}
  
 .layout {
 
@@ -54,13 +61,13 @@
  
 .calendarSection {
 
-  background: white;
+  background: var(--card-bg);
 
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
 
-  padding: 20px;
+  padding: 22px;
 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(12,24,64,0.06);
 
 }
  
@@ -103,27 +110,13 @@
 }
  
 .dayNamesRow {
-
   display: grid;
-
   grid-template-columns: repeat(7, 1fr);
-
   text-align: center;
-
   font-weight: 600;
-
   margin-bottom: 8px;
-
-  font-size: 12px;
-
-  color: #555;
-
-}
- 
-.dayName {
-
-  padding: 6px 0;
-
+  font-size: 13px;
+  color: #334155;
 }
  
 .calendarGrid {
@@ -137,10 +130,21 @@
 }
  
 .dayCellEmpty {
-
   min-height: 60px;
-
 }
+
+.dayName {
+  padding: 10px 0;
+  font-size: 13px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.containerIntro{max-width:1100px;margin:0 auto 16px;padding:0 12px}
+.introCard{background:var(--card-bg);padding:16px;border-radius:12px;box-shadow:0 8px 20px rgba(12,24,64,0.06);color:#1f2937}
+.introCard p{margin:8px 0;color:#374151;line-height:1.45}
+.introCard ul{margin:8px 0 12px 18px;color:#374151}
+.toggleIntro{margin-top:8px;border:none;background:var(--primary);color:white;padding:8px 12px;border-radius:999px;cursor:pointer}
  
 .dayCell {
 
@@ -174,32 +178,29 @@
  
 .dayWithWish {
 
-  background: #fff3e0;
+  background: linear-gradient(180deg,#fff7ef 0%, #fff3e6 100%);
 
-  border-color: #ff9800;
+  border-color: var(--accent);
 
 }
  
+
 .dot {
-
   align-self: flex-end;
-
-  width: 8px;
-
-  height: 8px;
-
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-
-  background: #ff9800;
-
+  background: var(--accent);
+  box-shadow: 0 2px 6px rgba(255,152,0,0.14);
 }
 
 .dotDone {
   align-self: flex-end;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: #4caf50;
+  background: var(--success);
+  box-shadow: 0 2px 6px rgba(16,185,129,0.14);
 }
  
 .legend {
@@ -245,15 +246,10 @@
 }
  
 .card {
-
-  background: white;
-
-  border-radius: 16px;
-
-  padding: 20px;
-
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(12,24,64,0.06);
 }
  
 .sectionTitle {
