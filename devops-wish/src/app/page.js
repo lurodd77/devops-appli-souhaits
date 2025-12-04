@@ -1,23 +1,47 @@
 "use client";
-
+ 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
+ 
 export default function LoginPage() {
   const router = useRouter();
   const [identifiant, setIdentifiant] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSubmit = (e) => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+ 
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    router.push("/wish"); 
+    setError("");
+    setLoading(true);
+ 
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifiant, password }),
+      });
+ 
+      const data = await res.json();
+ 
+      if (!res.ok) {
+        setError(data?.message || 'Erreur lors de la connexion');
+        setLoading(false);
+        return;
+      }
+ 
+      // succès
+      router.push('/wish');
+    } catch (err) {
+      setError('Erreur réseau');
+      setLoading(false);
+    }
   };
-
+ 
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Connexion</h1>
-
+ 
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="text"
@@ -26,7 +50,7 @@ export default function LoginPage() {
           onChange={(e) => setIdentifiant(e.target.value)}
           style={styles.input}
         />
-
+ 
         <input
           type="password"
           placeholder="Mot de passe"
@@ -34,15 +58,16 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           style={styles.input}
         />
-
+ 
         <button type="submit" style={styles.button}>
-          Se connecter
+          {loading ? 'Connexion...' : 'Se connecter'}
         </button>
+        {error && <div style={{color: 'red', marginTop: 8}}>{error}</div>}
       </form>
     </div>
   );
 }
-
+ 
 const styles = {
   container: {
     display: "flex",
