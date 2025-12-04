@@ -1,47 +1,44 @@
 pipeline {
     agent any
 
-    // C'est ici qu'on répond à l'exigence "parameters" 
     parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Sur quel environnement déployer ?')
-        booleanParam(name: 'LANCER_TESTS', defaultValue: true, description: 'Voulez-vous lancer les tests ?')
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'PROD'], description: 'Environnement')
     }
 
     stages {
         stage('Installation') {
             steps {
-                echo "Installation des dépendances sur Windows..."
-                // Rappel : on utilise bat pour Windows
+                echo "📦 Installation..."
+                // On installe les dépendances (nécessaire pour Jest)
                 bat 'cd devops-wish && npm install'
             }
         }
 
-        stage('Build') {
+        stage('Tests Applicatifs (User & Voeux)') {
             steps {
-                echo "Construction de l'application..."
-                bat 'cd devops-wish && npm run build'
-            }
-        }
-
-        stage('Tests') {
-            when {
-                // Ce stage ne se lance que si l'utilisateur a coché "TRUE" dans les paramètres
-                expression { params.LANCER_TESTS == true }
-            }
-            steps {
-                echo "Lancement des tests..."
+                echo "🧪 Lancement des tests User1 et Tatouage..."
+                // Cela va lancer features.test.js qu'on vient de créer
                 bat 'cd devops-wish && npm run test'
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Vérification de la Date') {
             steps {
                 script {
-                    if (params.ENVIRONMENT == 'PROD') {
-                        echo "⚠️ DÉPLOIEMENT EN PRODUCTION EN COURS..."
-                        // Ici tu mettrais tes commandes de déploiement réel
+                    // --- SCÉNARIO 3 : Logique de date en Groovy ---
+                    
+                    // On récupère le jour actuel (format "d" donne le numéro du jour)
+                    def dateDuJour = new Date()
+                    def jour = dateDuJour.format("d").toInteger()
+                    
+                    echo "📅 Nous sommes le : ${dateDuJour.format('dd/MM/yyyy')}"
+
+                    if (jour < 15) {
+                        [cite_start]// Source PDF : Avant le 15, on est en phase de réalisation [cite: 71, 72]
+                        echo "🔵 MESSAGE DU JOUR : Penser à renseigner vos voeux"
                     } else {
-                        echo "Déploiement en environnement de TEST (Dev)."
+                        [cite_start]// Source PDF : Après le 15, il faut finaliser [cite: 74, 76]
+                        echo "🟠 MESSAGE DU JOUR : Penser à valider vos voeux"
                     }
                 }
             }
